@@ -12,7 +12,7 @@ app = Flask(__name__)
 #
 #
 #
-
+LAMBDA_API_URL = ""
 
 @app.route("/")
 def home():
@@ -28,11 +28,11 @@ def home():
 @app.route("/add", methods=["POST"])
 def add():
     title = request.form.get("title")
-    # Complete code below to create a new item in your todo list
-
-
-    return redirect(url_for("home"))
-
+    description = request.form.get("description")
+    data = {'title': title,
+            'description': description}
+    response = requests.post(LAMBDA_API_URL, json=data)
+    return jsonify({"lambda_response": response.text}), response.status_code
 
 
 @app.route("/update/<todo_id>")
