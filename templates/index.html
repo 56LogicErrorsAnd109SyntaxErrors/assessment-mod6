@@ -17,11 +17,14 @@
         <form class="ui form" action="/add" method="post">
             <div class="field">
                 <label>Todo Title</label>
-                <input type="text" name="title" placeholder="Enter Todo..."><br>
+                <input type="text" name="title" placeholder="Enter Todo..." required><br>
+            </div>
+            <div class="field">
+                <label>Todo Description</label>
+                <input type="text" name="description" placeholder="Enter Todo..."><br>
             </div>
             <button class="ui blue button" type="submit">Add</button>
         </form>
-
         <hr>
 
         {% for todo in todo_list %}
