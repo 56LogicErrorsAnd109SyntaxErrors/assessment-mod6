@@ -9,3 +9,6 @@ Werkzeug==2.3.6
 zipp==3.16.2
 pytest==8.4.1
 pytest_bdd==8.1.0
+boto3==1.34.0
+python-dotenv==1.0.1
+requests==2.31.0

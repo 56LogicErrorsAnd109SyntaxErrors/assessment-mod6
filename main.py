@@ -14,8 +14,6 @@ app = Flask(__name__)
 #
 #
 #
-LAMBDA_API_URL = "https://fvxqkt5jxr7rqsniflvm5brrd40mciay.lambda-url.ap-southeast-1.on.aws/"
-
 @app.route("/")
 def home():
     # Complete the code below
