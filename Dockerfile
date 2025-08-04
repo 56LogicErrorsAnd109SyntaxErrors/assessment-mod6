@@ -18,4 +18,3 @@ COPY . .
 ENTRYPOINT ["python"]
 
 CMD ["main.py"]
- 
