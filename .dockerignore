@@ -1,3 +1,55 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Unit test cache
+.pytest_cache/
+*.cover
+*.coverage
+
+# Git files
+.git/
 .gitignore
-.devcontainer
-.pytest_cache
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node (if applicable)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Environment files (DON’T include secrets in image)
+.env
+.env.*
+
+# Docker files not needed in image
+docker-compose*.yml
+Dockerfile*
+
+# Package metadata
+*.egg-info/
+.eggs/
+
+# Unit test outputs
+htmlcov/
+.coverage
+*.db
+*.sqlite3
+
+# Others
+*.tar.gz
+*.zip
+*.bak

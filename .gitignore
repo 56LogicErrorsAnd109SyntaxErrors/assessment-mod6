@@ -1,3 +1,54 @@
-.pytest_cache
+# Byte-compiled / optimized / DLL files
 __pycache__/
-.env
+*.py[cod]
+*$py.class
+
+# Unit test and BDD test cache
+.pytest_cache/
+*.cover
+*.coverage
+*.egg-info/
+
+# VS Code settings
+.vscode/
+
+# Virtual environments
+.env/
+venv/
+ENV/
+env.bak/
+*.env
+
+# AWS credentials or URLs
+*.pem
+*.key
+*.crt
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Flask/Node runtime files
+instance/
+*.log
+
+# Docker
+*.pid
+*.sock
+*.db
+*.sqlite3
+docker-compose.override.yml
+
+# Node.js (if any frontend exists)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# IDE junk
+*.sublime-workspace
+*.sublime-project
+
+# Environments
+.envrc
+.env.*
