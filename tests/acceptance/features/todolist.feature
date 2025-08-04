@@ -1,5 +1,10 @@
 Feature: To-Do List
 
+Scenario: Add task with missing title
+Given I have a to-do list
+When I try to add a task with no title
+Then I should see an error message indicating the title is required
+
 Scenario: Add a new task
 Given I have a to-do list
 When I add a new task "Buy groceries"
@@ -16,17 +21,12 @@ When I remove the task "Buy groceries"
 Then the task "Buy groceries" should not be in my to-do list
 
 Scenario: Search for a task
-Given I have a to-do list with tasks "Buy groceries", "Clean the house", and "Walk the dog"
+Given I have a to-do list with tasks "Buy groceries", "Clean the house", "Walk the dog"
 When I search for the task "Clean"
-Then the task "Clean the house" should be in my to-do list
+Then I should see "Clean the house" in my to-do list
 
 Scenario: View all tasks
-  Given I have a to-do list with tasks "Buy groceries" and "Walk the dog"
-  When the search bar is empty
-  Then I should see "Buy groceries" and "Walk the dog" in my to-do list
-
-Scenario: Add task with missing title
-  Given I have a to-do list
-  When I try to add a task with no title
-  Then I should see an error message indicating the title is required
+Given I have a to-do list with tasks "Buy groceries", "Clean the house", "Walk the dog"
+When the search bar is empty
+Then I should see "Buy groceries", "Clean the house", "Walk the dog" in my to-do list
 

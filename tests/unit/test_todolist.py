@@ -1,18 +1,27 @@
 import pytest
-from src.todolist import ToDoList
+from src.todo_list import ToDoList
 
 @pytest.fixture
 def todo_list():
     return ToDoList()
 
+def test_validate_task_name(todo_list):
+    """
+    Test validating task names.
+    This test checks if the task name validation works correctly, ensuring that empty or whitespace-only names are not allowed.
+    """
+    assert todo_list.validate_task_name("Valid Task")
+    assert todo_list.validate_task_name("") == "Task name cannot be empty"
+    assert todo_list.validate_task_name(" " * 10) == "Task name cannot be empty"
+
 def test_add_task(todo_list):
     """
     Test adding a task to the to-do list.
-    This test checks if a task can be added and is retrievable from the DynamoDB
+    This test checks if a task can be added and is retrievable from the DynamoDB.
+    The task should have a valid title.
     """
     assert todo_list.add_task("Test task")
-    assert not todo_list.add_task("")
-    assert not todo_list.add_task(" " * 10)  # Assuming task names cannot be just spaces
+    assert todo_list.add_task("") == "Task name cannot be empty"
 
 def test_get_tasks(todo_list):
     """
@@ -22,9 +31,9 @@ def test_get_tasks(todo_list):
     todo_list.add_task("Task 1")
     todo_list.add_task("Task 2")
     todo_list.add_task("Process 1")
-    task_1 = todo_list.get_task("Task_1")
+    task_1 = todo_list.get_tasks("Task_1")
     tasks = todo_list.get_tasks("Task")
-    all_tasks = todo_list.get_tasks()
+    all_tasks = todo_list.get_tasks("")
     assert task_1 == "Task 1"
     assert tasks == ["Task 1", "Task 2"]
     assert all_tasks == ["Task 1", "Task 2", "Process 1"]

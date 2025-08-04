@@ -1,76 +1,83 @@
-from behave import given, when, then
-from   # Replace with your actual app module/class
+import pytest
+from pytest_bdd import given, when, then, scenarios, parsers
+from src.todo_list import ToDoList
 
-# Initialize the app state before each scenario
-def before_scenario(context, scenario):
-    context.app = ToDoApp()
-    context.last_created_item = None
 
-@given("I have no to-do list")
-def step_impl(context):
-    context.app.clear_items()
+# Link the scenarios to the feature file
+scenarios("../acceptance/features/todo_list.feature")
+#Code below:
 
-@when('I create a to do list with a "Buy groceries" item')
-def step_impl(context):
-    context.last_created_item = context.app.create_item("Buy groceries")
+@pytest.fixture
+def todo_list():
+    return ToDoList()
 
-@then("the new item should be saved to the database")
-def step_impl(context):
-    items = context.app.get_items()
-    assert context.last_created_item in items
+#Tests for adding a task
+@given("I am on the to-do list page")
+def step_given_todo_list_page(todo_list):
+    return todo_list
 
-@given("there are items in the database")
-def step_impl(context):
-    context.app.create_item("Buy groceries")
-    context.app.create_item("Do laundry")
+@when(parsers.parse("I add a new task with a title {title}"))
+def step_when_add_task(todo_list, title):
+    result =  todo_list.add_task(title)
 
-@when("I view the to-do list")
-def step_impl(context):
-    context.items = context.app.get_items()
+@then(parsers.parse("the task with title {title} should be added"))
+def step_then_task_added(todo_list, title):
+    assert title in todo_list.get_tasks()
 
-@then("I should see a list of all items")
-def step_impl(context):
-    assert len(context.items) > 0
+@when("I try to add a task with no title", pytest_fixture = "result")
+def step_when_add_task_no_title(todo_list):
+    result = todo_list.add_task("")
+    return result
 
-@given("a to-do item exists")
-def step_impl(context):
-    context.item = context.app.create_item("Pay bills")
+@then("I should see an error message indicating the title is required")
+def step_then_error_message(todo_list, result):
+    assert result == "Task name cannot be empty"
+    
+# Tests for updating and removing a task
+@given(parsers.parse("I have a to-do list with a task {title}"))
+def step_given_todo_list_with_task(todo_list, title):
+    todo_list.add_task(title)
+    return todo_list
 
-@when("I view the item")
-def step_impl(context):
-    context.viewed_item = context.app.get_item(context.item.id)
+@when(parsers.parse("I update the task with title {title} to {new_title}"))
+def step_when_update_task(todo_list, title, new_title):
+    todo_list.update_task(title, new_title)
 
-@then("I should see the attributes of the item")
-def step_impl(context):
-    assert context.viewed_item.name == "Pay bills"
+@then(parsers.parse("the task with title {new_title} should be in my to-do list and task {title} should not be in my to-do list"))
+def step_then_task_updated(todo_list, new_title, title):
+    assert new_title in todo_list.get_tasks()
+    assert title not in todo_list.get_tasks()
 
-@given("multiple items exist in the database")
-def step_impl(context):
-    context.app.create_item("Pay bills")
-    context.app.create_item("Buy milk")
-    context.app.create_item("Walk dog")
+@when(parsers.parse("I delete the task with title {title}"))
+def step_when_delete_task(todo_list, title):
+    todo_list.delete_task(title)
 
-@when("I search for a keyword")
-def step_impl(context):
-    context.search_results = context.app.search_items("milk")
+@then(parsers.parse("the task with title {title} should not be in my to-do list"))
+def step_then_task_deleted(todo_list, title):
+    assert title not in todo_list.get_tasks()
 
-@then("only matching items should be displayed in the list")
-def step_impl(context):
-    assert all("milk" in item.name.lower() for item in context.search_results)
+# Tests for searching tasks
+@given(parsers.parse('Given I have a to-do list with tasks {titles}'))
+def step_given_todo_list_with_multiple_tasks(todo_list, titles):
+    for title in titles.split(", "):
+        todo_list.add_task(title)
 
-@when("I add an item")
-def step_impl(context):
-    context.added_item = context.app.create_item("Read book")
+    return todo_list
 
-@then("the item should be in the to-do list")
-def step_impl(context):
-    assert context.added_item in context.app.get_items()
+@when(parsers.parse("I search for the task {search_term}"))
+def step_when_search_task(todo_list, search_term):
+    result = todo_list.get_tasks(search_term)
+    return result
 
-@when("I Delete an item")
-def step_impl(context):
-    context.app.delete_item(context.item.id)
+@then(parsers.parse("I should see {title} in my to-do list"), pytest_fixture="result")
+def step_then_task_in_list(todo_list, title, result):
+    assert title in result
 
-@then("the item should be removed from the database")
-def step_impl(context):
-    items = context.app.get_items()
-    assert context.item not in items
+@when("the search bar is empty", pytest_fixture="result")
+def step_when_search_bar_empty(todo_list):
+    result = todo_list.get_tasks("")
+    return result
+
+@then(parsers.parse("I should see {titles} in my to-do list"))
+def step_then_all_tasks_in_list(todo_list, titles, result):
+    assert titles.split(", ") == result
