@@ -6,11 +6,14 @@ from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute, BooleanAttribute
 from datetime import datetime
 
+load_dotenv()
 
 class Task(Model):
     class Meta:
         table_name = "todo-table"
-        region = "ap-southeast-1"  # Change if needed
+        region = os.getenv('AWS_REGION', 'ap-southeast-1')
+        aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+        aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
     title = UnicodeAttribute(hash_key=True)
     date_created = UnicodeAttribute()
     status = BooleanAttribute()
