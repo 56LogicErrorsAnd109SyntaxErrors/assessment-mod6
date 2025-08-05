@@ -5,6 +5,7 @@ import boto3
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute, BooleanAttribute
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 class Task(Model):
     class Meta:
@@ -15,6 +16,7 @@ class Task(Model):
         # aws_session_token = os.getenv('AWS_SESSION_TOKEN')
     title = UnicodeAttribute(hash_key=True)
     date_created = UnicodeAttribute()
+    time_created = UnicodeAttribute()
     status = BooleanAttribute()
     description = UnicodeAttribute()
 
@@ -59,7 +61,7 @@ class ToDoList:
             return "Task is already added to the list"
 
 
-        task = Task(title=title, status=False, date_created=str(datetime.now().date()), description=description)
+        task = Task(title=title, status=False, date_created=str(datetime.now(ZoneInfo("Asia/Singapore")).date()), time_created=str(datetime.now(ZoneInfo("Asia/Singapore")).time().replace(microsecond=0)), description=description)
         task.save()
         return True
 
@@ -98,4 +100,23 @@ class ToDoList:
         task = Task.get(hash_key=title)
         task.delete()
         return True
+    
+    def sort_tasks(self, tasks, sort_type):
+        """
+        This method should sort tasks based on the given mode.
+        """
+        if sort_type == "date":
+            sorted_tasks = sorted(
+                tasks,
+                key=lambda x: datetime.strptime(f"{x['date_created']} {x['time_created']}", "%Y-%m-%d %H:%M:%S"),
+                reverse=True
+            )
+        elif sort_type == "task_name":
+            sorted_tasks = sorted(tasks, key=lambda x: x["title"])
+        elif sort_type == "status":
+            sorted_tasks = sorted(tasks, key=lambda x: x["status"])
+
+        return sorted_tasks
+
+
    
