@@ -18,6 +18,11 @@
             <div class="field">
                 <label>Todo Title</label>
                 <input type="text" name="title" placeholder="Enter Todo..." required><br>
+                {% if is_duplicate == "True" %}
+                    <p style="color:red">Cannot have tasks of the same name</p>
+                {% elif is_blank == "True" %}
+                    <p style="color:red">Task name cannot be empty</p>
+                {% endif %}
             </div>
             <div class="field">
                 <label>Todo Description</label>
@@ -27,18 +32,18 @@
         </form>
         <hr>
 
-        {% for todo in todo_list %}
+        {% for task_id in range(task_number) %}
         <div class="ui segment">
-            <p class="ui big header">{{todo.id }} | {{ todo.title }}</p>
+            <p class="ui big header">{{ task_id }} | {{ tasks[task_id]["title"] }}</p>
 
-            {% if todo.complete == False %}
+            {% if tasks[task_id]["status"] == False %}
             <span class="ui gray label">Not Complete</span>
             {% else %}
             <span class="ui green label">Completed</span>
             {% endif %}
 
-            <a class="ui blue button" href="/update/{{ todo.id }}">Update</a>
-            <a class="ui red button" href="/delete/{{ todo.id }}">Delete</a>
+            <a class="ui blue button" href="/update/{{ tasks[task_id]['title'] }}">Update</a>
+            <a class="ui red button" href="/delete/{{ tasks[task_id]['title'] }}">Delete</a>
         </div>
         {% endfor %}
     </div>

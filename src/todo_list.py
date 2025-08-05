@@ -12,6 +12,7 @@ class Task(Model):
         region = "ap-southeast-1"  # Change if needed
     title = UnicodeAttribute(hash_key=True)
     date_created = UnicodeAttribute()
+    status = BooleanAttribute()
 
 class ToDoList:
     def __init__(self):
@@ -24,8 +25,19 @@ class ToDoList:
         """
         if name == "" or name.isspace():
             return "Task name cannot be empty"
-        
+
         return True
+    
+    def validate_task_not_exists(self, name : str):
+        """
+        Validates if the task is already added.
+        """
+        all_tasks = self.get_tasks()
+        for task in all_tasks:
+            if name == task["title"]:
+                return "Task is already added to the list"
+
+        return True 
 
         
     def add_task(self, title):
@@ -33,9 +45,14 @@ class ToDoList:
         This method should add a task to the DynamoDB table
         """
         if self.validate_task_name(title) == "Task name cannot be empty":
+            print("1")
             return "Task name cannot be empty"
         
-        task = Task(title=title, date_created=str(datetime.now().date()))
+        if self.validate_task_not_exists(title) == "Task is already added to the list":
+            print("2")
+            return "Task is already added to the list"
+
+        task = Task(title=title, status=False, date_created=str(datetime.now().date()))
         task.save()
         return True
 
@@ -54,12 +71,12 @@ class ToDoList:
         return tasks
         
 
-    def update_task(self, old_title, new_title):
+    def update_task(self, title):
         """
-        This method should update the task with the given todo_id to the new_title.
+        This method should update the task status with the given todo_id to the new_title.
         """
-        task = Task.get(hash_key=old_title)
-        task.title = new_title
+        task = Task.get(hash_key=title)
+        task.status = True
         task.save()
         return True
 
