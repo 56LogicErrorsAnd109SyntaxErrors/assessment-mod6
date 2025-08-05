@@ -24,13 +24,16 @@ def home():
     # The todo_list variable should be returned by running a scan on your DDB table,
     # which is then converted to a list
     search_term = request.args.get("search_term")
+    sort_type = request.args.get("sort_type")
     if search_term is None:
         search_term = ""
+        
     tasks = TODOLIST.get_tasks(search_term=search_term)
+    if sort_type is not None:
+        tasks = TODOLIST.sort_tasks(tasks, sort_type)
     task_number = len(tasks)
     is_blank = request.args.get('is_blank')
     is_duplicate = request.args.get('is_duplicate')
-
 
     # can leave this line as is to use the template that's provided
     return render_template("index.html", tasks=tasks, task_number=task_number, is_blank=is_blank, is_duplicate=is_duplicate, search_term=search_term)
@@ -78,6 +81,10 @@ def delete(title):
 def search():
     search_term = request.form.get("search")
     return redirect(url_for("home", search_term=search_term))
+
+@app.route("/sort/<sort_type>")
+def sort(sort_type):
+    return redirect(url_for("home", sort_type=sort_type))
 
 
 
