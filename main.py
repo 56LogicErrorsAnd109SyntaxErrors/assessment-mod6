@@ -59,5 +59,8 @@ def delete(title):
     TODOLIST.delete_task(title)
     return redirect(url_for("home"))
 
+# app.py
+import os
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
